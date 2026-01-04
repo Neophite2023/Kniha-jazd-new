@@ -48,9 +48,18 @@ const App: React.FC = () => {
         parsed.serviceReminders = [{
           id: 'migrated-' + Date.now(),
           name: parsed.serviceName || 'Servisný interval',
+          type: 'distance',
           interval: parsed.serviceInterval || 15000,
           lastServiceOdometer: parsed.lastServiceOdometer || 0
         }];
+      }
+
+      // Zabezpečenie typu pre existujúce záznamy
+      if (parsed.serviceReminders) {
+        parsed.serviceReminders = parsed.serviceReminders.map((r: any) => ({
+          type: 'distance',
+          ...r
+        }));
       }
 
       return {

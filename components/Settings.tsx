@@ -32,6 +32,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSave, onBack }) => {
     const newReminder: ServiceReminder = {
       id: Date.now().toString(),
       name: '',
+      type: 'distance',
       interval: 15000,
       lastServiceOdometer: 0
     };
@@ -119,26 +120,63 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSave, onBack }) => {
                       </svg>
                     </button>
                   </div>
-                  <div className="p-4 border-b border-zinc-100 flex items-center gap-4">
-                    <label className="w-40 text-xs font-semibold text-zinc-500 uppercase">Interval</label>
-                    <input
-                      type="number"
-                      value={reminder.interval}
-                      onChange={e => updateReminder(reminder.id, 'interval', parseInt(e.target.value) || 0)}
-                      className="flex-grow bg-transparent text-sm font-medium text-zinc-950 text-right tabular-nums outline-none"
-                    />
-                    <span className="text-[10px] font-bold text-zinc-300">km</span>
+
+                  <div className="p-4 border-b border-zinc-100 flex items-center justify-between gap-4">
+                    <label className="text-xs font-semibold text-zinc-500 uppercase">Typ sledovania</label>
+                    <div className="flex bg-zinc-50 p-1 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => updateReminder(reminder.id, 'type', 'distance')}
+                        className={`px-4 py-1.5 text-[10px] font-bold rounded-lg transition-all ${reminder.type === 'distance' ? 'bg-white shadow-sm text-zinc-950' : 'text-zinc-400 hover:text-zinc-600'}`}
+                      >
+                        KM
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateReminder(reminder.id, 'type', 'date')}
+                        className={`px-4 py-1.5 text-[10px] font-bold rounded-lg transition-all ${reminder.type === 'date' ? 'bg-white shadow-sm text-zinc-950' : 'text-zinc-400 hover:text-zinc-600'}`}
+                      >
+                        DÁTUM
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-4 flex items-center gap-4">
-                    <label className="w-40 text-xs font-semibold text-zinc-500 uppercase">Posledný servis</label>
-                    <input
-                      type="number"
-                      value={reminder.lastServiceOdometer}
-                      onChange={e => updateReminder(reminder.id, 'lastServiceOdometer', parseInt(e.target.value) || 0)}
-                      className="flex-grow bg-transparent text-sm font-medium text-zinc-950 text-right tabular-nums outline-none"
-                    />
-                    <span className="text-[10px] font-bold text-zinc-300">ODO</span>
-                  </div>
+
+                  {reminder.type === 'distance' ? (
+                    <>
+                      <div className="p-4 border-b border-zinc-100 flex items-center gap-4">
+                        <label className="w-40 text-xs font-semibold text-zinc-500 uppercase">Interval</label>
+                        <input
+                          type="number"
+                          value={reminder.interval || ''}
+                          onChange={e => updateReminder(reminder.id, 'interval', parseInt(e.target.value) || 0)}
+                          className="flex-grow bg-transparent text-sm font-medium text-zinc-950 text-right tabular-nums outline-none"
+                          placeholder="15000"
+                        />
+                        <span className="text-[10px] font-bold text-zinc-300">km</span>
+                      </div>
+                      <div className="p-4 flex items-center gap-4">
+                        <label className="w-40 text-xs font-semibold text-zinc-500 uppercase">Posledný servis</label>
+                        <input
+                          type="number"
+                          value={reminder.lastServiceOdometer || ''}
+                          onChange={e => updateReminder(reminder.id, 'lastServiceOdometer', parseInt(e.target.value) || 0)}
+                          className="flex-grow bg-transparent text-sm font-medium text-zinc-950 text-right tabular-nums outline-none"
+                          placeholder="0"
+                        />
+                        <span className="text-[10px] font-bold text-zinc-300">ODO</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-4 flex items-center gap-4">
+                      <label className="w-40 text-xs font-semibold text-zinc-500 uppercase">Termín</label>
+                      <input
+                        type="date"
+                        value={reminder.targetDate || ''}
+                        onChange={e => updateReminder(reminder.id, 'targetDate', e.target.value)}
+                        className="flex-grow bg-transparent text-sm font-medium text-zinc-950 text-right outline-none"
+                      />
+                    </div>
+                  )}
                 </div>
               ))
             )}

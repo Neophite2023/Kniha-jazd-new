@@ -35,8 +35,44 @@ const Dashboard: React.FC<DashboardProps> = ({
           <h3 className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest px-1">Servisné Pripomienky</h3>
           <div className="space-y-6">
             {settings.serviceReminders.map(reminder => {
-              const remaining = reminder.interval - (lastOdometer - reminder.lastServiceOdometer);
-              const progress = Math.min(100, Math.max(0, ((lastOdometer - reminder.lastServiceOdometer) / reminder.interval) * 100));
+              if (reminder.type === 'date' && reminder.targetDate) {
+                const target = new Date(reminder.targetDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const diffTime = target.getTime() - today.getTime();
+                const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const dateFormatted = target.toLocaleDateString('sk-SK', { day: 'numeric', month: 'numeric', year: 'numeric' });
+
+                return (
+                  <div key={reminder.id} className="space-y-2">
+                    <div className="flex justify-between items-end px-1">
+                      <div>
+                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-0.5">
+                          {reminder.name}
+                        </span>
+                        <div className="text-lg font-bold text-zinc-950 leading-none">
+                          {Math.max(0, daysRemaining).toLocaleString()}
+                          <span className="text-[10px] font-medium text-zinc-400 ml-1.5 uppercase">dní do termínu</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] font-bold text-zinc-300">termín: {dateFormatted}</span>
+                      </div>
+                    </div>
+
+                    <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-1000 ${daysRemaining < 14 ? 'bg-red-500' : 'bg-zinc-950'}`}
+                        style={{ width: daysRemaining <= 0 ? '100%' : daysRemaining < 14 ? '95%' : '10%' }}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
+              // Distance based
+              const remaining = (reminder.interval || 0) - (lastOdometer - (reminder.lastServiceOdometer || 0));
+              const progress = Math.min(100, Math.max(0, ((lastOdometer - (reminder.lastServiceOdometer || 0)) / (reminder.interval || 1)) * 100));
 
               return (
                 <div key={reminder.id} className="space-y-2">
@@ -51,7 +87,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] font-bold text-zinc-300">pri {(reminder.lastServiceOdometer + reminder.interval).toLocaleString()} km</span>
+                      <span className="text-[10px] font-bold text-zinc-300">pri {((reminder.lastServiceOdometer || 0) + (reminder.interval || 0)).toLocaleString()} km</span>
                     </div>
                   </div>
 

@@ -24,8 +24,10 @@ export interface ActiveTrip {
 export interface ServiceReminder {
   id: string;
   name: string;
-  interval: number;
-  lastServiceOdometer: number;
+  type: 'distance' | 'date';
+  interval?: number;
+  lastServiceOdometer?: number;
+  targetDate?: string;
 }
 
 export interface AppSettings {
