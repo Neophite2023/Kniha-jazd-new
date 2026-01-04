@@ -21,8 +21,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   onAddTrip
 }) => {
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm">
+    <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
         <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Mesačný Nájazd • {stats.currentMonthName} {stats.currentYear}</span>
         <div className="flex items-baseline gap-2">
           <span className="text-5xl font-bold tracking-tight text-zinc-950">{stats.monthlyDistance.toFixed(0)}</span>
@@ -31,7 +31,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {settings.serviceInterval && (
-        <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-4">
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm space-y-4">
           <div className="flex justify-between items-end">
             <div>
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
@@ -43,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
             <div className="text-right">
-              <span className="text-xs font-bold text-zinc-300">{(settings.lastServiceOdometer || 0) + settings.serviceInterval} ODO</span>
+              <span className="text-xs font-bold text-zinc-300">pri {((settings.lastServiceOdometer || 0) + settings.serviceInterval).toLocaleString()} km</span>
             </div>
           </div>
 
@@ -84,7 +84,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex justify-between items-center px-1">
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Nedávne Aktivity</h3>
           <button onClick={onViewAll} className="text-xs font-medium text-zinc-500 hover:text-white transition-colors">Všetky</button>

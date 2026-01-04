@@ -105,7 +105,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSave, onBack }) => {
                 className="flex-grow bg-transparent text-sm font-medium text-zinc-950 placeholder-zinc-300 outline-none text-right tabular-nums"
                 placeholder="0"
               />
-              <span className="text-xs font-semibold text-zinc-400">odo</span>
+              <span className="text-xs font-semibold text-zinc-400">km</span>
             </div>
           </div>
           <p className="px-4 text-[10px] text-zinc-400 font-medium">Najazdené km od posledného servisu sa vypočítajú automaticky.</p>
