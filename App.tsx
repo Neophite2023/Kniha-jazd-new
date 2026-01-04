@@ -33,11 +33,19 @@ const App: React.FC = () => {
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     const stored = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    if (!stored) return { fuelPrice: 1.65, averageConsumption: 6.5 };
+    if (!stored) return { fuelPrice: 1.65, averageConsumption: 6.5, serviceInterval: 15000, lastServiceOdometer: 0, serviceName: 'Výmena oleja' };
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      return {
+        fuelPrice: 1.65,
+        averageConsumption: 6.5,
+        serviceInterval: 15000,
+        lastServiceOdometer: 0,
+        serviceName: 'Výmena oleja',
+        ...parsed
+      };
     } catch (e) {
-      return { fuelPrice: 1.65, averageConsumption: 6.5 };
+      return { fuelPrice: 1.65, averageConsumption: 6.5, serviceInterval: 15000, lastServiceOdometer: 0, serviceName: 'Výmena oleja' };
     }
   });
 
@@ -60,11 +68,27 @@ const App: React.FC = () => {
   }, [activeTrip]);
 
   const stats: HistoryStats = useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
     const totalDistance = trips.reduce((acc, t) => acc + t.distanceKm, 0);
     const totalCost = trips.reduce((acc, t) => acc + t.totalCost, 0);
     const totalFuel = trips.reduce((acc, t) => acc + t.fuelConsumed, 0);
+
+    const monthlyTrips = trips.filter(t => {
+      const tripDate = new Date(t.date);
+      return tripDate.getMonth() === currentMonth && tripDate.getFullYear() === currentYear;
+    });
+    const monthlyDistance = monthlyTrips.reduce((acc, t) => acc + t.distanceKm, 0);
+
+    const monthName = now.toLocaleDateString('sk-SK', { month: 'long' });
+
     return {
       totalDistance,
+      monthlyDistance,
+      currentMonthName: monthName.charAt(0).toUpperCase() + monthName.slice(1),
+      currentYear,
       totalCost,
       totalFuel,
       averageTripDistance: trips.length > 0 ? totalDistance / trips.length : 0,
@@ -87,83 +111,97 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col text-zinc-100 selection:bg-white selection:text-black antialiased">
-      <header className="bg-black/60 backdrop-blur-md border-b border-white/[0.08] sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-white text-black rounded-lg flex items-center justify-center font-black text-[10px] shadow-lg shadow-white/5">K</div>
-            <h1 className="text-[11px] font-black tracking-[0.2em] uppercase text-white/90">Kniha Jázd</h1>
-          </div>
-          <button 
-            onClick={() => setView('settings')}
-            className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-all border border-white/5 text-zinc-500 hover:text-white group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 group-hover:rotate-45 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
-        </div>
+    <div className="min-h-screen bg-black flex flex-col text-white selection:bg-white/20 antialiased overflow-x-hidden relative">
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center">
+        <h1 className="text-lg font-semibold tracking-tight">Kniha Jázd</h1>
+        <button
+          onClick={() => setView('settings')}
+          className="p-2 -mr-2 text-white hover:opacity-60 transition-opacity"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+        </button>
       </header>
 
-      <main className="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 mb-24">
+      <main className="flex-grow w-full max-w-lg mx-auto p-4 pb-32">
+        <div className="mb-8 px-2 pt-6">
+          <h2 className="text-4xl font-extrabold tracking-tight">
+            {view === 'dashboard' ? 'Prehľad' : view === 'add' ? 'Záznam' : view === 'history' ? 'História' : 'Nastavenia'}
+          </h2>
+        </div>
+
         <div className="view-transition">
           {view === 'dashboard' && (
-            <Dashboard 
-              stats={stats} 
-              recentTrips={trips.slice(0, 5)} 
+            <Dashboard
+              stats={stats}
+              recentTrips={trips.slice(0, 5)}
               activeTrip={activeTrip}
+              settings={settings}
+              lastOdometer={trips.length > 0 ? trips[0].endOdometer : 0}
               onViewAll={() => setView('history')}
               onAddTrip={() => setView('add')}
             />
           )}
           {view === 'add' && (
-            <TripForm 
+            <TripForm
               key={activeTrip ? 'active' : 'new'}
-              settings={settings} 
+              settings={settings}
               activeTrip={activeTrip}
               onStart={handleStartTrip}
-              onSave={handleSaveTrip} 
-              onCancel={() => setView('dashboard')} 
+              onSave={handleSaveTrip}
+              onCancel={() => setView('dashboard')}
               lastTripEndOdometer={trips.length > 0 ? trips[0].endOdometer : 0}
             />
           )}
           {view === 'history' && (
-            <TripList 
-              trips={trips} 
-              onDelete={handleDeleteTrip} 
+            <TripList
+              trips={trips}
+              onDelete={handleDeleteTrip}
               onBack={() => setView('dashboard')}
             />
           )}
           {view === 'settings' && (
-            <Settings 
-              settings={settings} 
-              onSave={setSettings} 
+            <Settings
+              settings={settings}
+              onSave={setSettings}
               onBack={() => setView('dashboard')}
             />
           )}
         </div>
       </main>
 
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <div className="bg-zinc-900/80 backdrop-blur-2xl border border-white/10 py-3 px-8 gap-12 flex justify-center items-center rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] transition-all duration-300">
-          <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all ${view === 'dashboard' ? 'text-white' : 'text-zinc-500 hover:text-zinc-400'}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill={view === 'dashboard' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            <span className="text-[7px] uppercase font-black tracking-widest">Prehľad</span>
-          </button>
-          
-          <button 
-            onClick={() => view === 'add' ? setView('dashboard') : setView('add')} 
-            className={`flex items-center justify-center w-12 h-12 scale-[1.01] rounded-full border-[6px] border-zinc-900 -mt-10 shadow-xl transition-all hover:scale-[1.05] active:scale-95 group ${view === 'add' ? 'bg-zinc-800 text-white' : 'bg-white text-black'}`}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-3xl border-t border-white/5 pb-[env(safe-area-inset-bottom)]">
+        <div className="max-w-lg mx-auto flex justify-between items-center h-16 px-12">
+          <button
+            onClick={() => setView('dashboard')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'dashboard' ? 'text-white' : 'text-zinc-500'}`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-transform duration-300 ${activeTrip || view === 'add' ? 'rotate-45' : 'group-hover:rotate-90'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={(activeTrip || view === 'add') ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'dashboard' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
+            <span className="text-[10px] font-medium">Prehľad</span>
           </button>
 
-          <button onClick={() => setView('history')} className={`flex flex-col items-center gap-1 transition-all ${view === 'history' ? 'text-white' : 'text-zinc-500 hover:text-zinc-400'}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill={view === 'history' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span className="text-[7px] uppercase font-black tracking-widest">Záznamy</span>
+          <button
+            onClick={() => view === 'add' ? setView('dashboard') : setView('add')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'add' ? 'text-white' : 'text-zinc-500'}`}
+          >
+            <div className={`p-1.5 rounded-full transition-colors ${view === 'add' ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setView('history')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'history' ? 'text-white' : 'text-zinc-500'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'history' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-[10px] font-medium">História</span>
           </button>
         </div>
       </nav>

@@ -1,97 +1,126 @@
 import React from 'react';
-import { Trip, HistoryStats, ActiveTrip } from '../types';
+import { Trip, HistoryStats, ActiveTrip, AppSettings } from '../types';
 
 interface DashboardProps {
   stats: HistoryStats;
   recentTrips: Trip[];
   activeTrip: ActiveTrip | null;
+  settings: AppSettings;
+  lastOdometer: number;
   onViewAll: () => void;
   onAddTrip: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ 
-  stats, 
-  recentTrips, 
+const Dashboard: React.FC<DashboardProps> = ({
+  stats,
+  recentTrips,
   activeTrip,
-  onViewAll, 
+  settings,
+  lastOdometer,
+  onViewAll,
   onAddTrip
 }) => {
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      {/* Active Trip Banner - Modern Focus UI */}
-      {activeTrip && (
-        <div className="relative overflow-hidden bg-zinc-900 border border-white/10 rounded-2xl p-4 flex items-center justify-between shadow-2xl">
-          {/* pointer-events-none is CRITICAL here to prevent blocking clicks */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.03] rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-          
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="relative">
-              <div className="w-10 h-10 bg-white text-black rounded-xl flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-zinc-900 animate-ping"></div>
-            </div>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
+        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">Mesačný Nájazd • {stats.currentMonthName} {stats.currentYear}</span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-5xl font-bold tracking-tight text-white">{stats.monthlyDistance.toFixed(0)}</span>
+          <span className="text-xl font-medium text-zinc-500">km</span>
+        </div>
+      </div>
+
+      {settings.serviceInterval && (
+        <div className="bg-zinc-900/50 rounded-3xl p-6 border border-white/5 space-y-4">
+          <div className="flex justify-between items-end">
             <div>
-              <div className="font-black text-white text-[10px] tracking-[0.2em] uppercase opacity-50 mb-0.5">V pohybe</div>
-              <div className="text-sm font-bold text-white uppercase tracking-tight">{activeTrip.startTime} • {activeTrip.startOdometer} km</div>
+              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                {settings.serviceName || 'Servisný interval'}
+              </span>
+              <div className="text-2xl font-bold text-white">
+                {Math.max(0, settings.serviceInterval - (lastOdometer - (settings.lastServiceOdometer || 0))).toLocaleString()}
+                <span className="text-sm font-medium text-zinc-500 ml-2">km do cieľa</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-xs font-bold text-white/40">{(settings.lastServiceOdometer || 0) + settings.serviceInterval} ODO</span>
             </div>
           </div>
 
-          <button 
+          <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-1000 ${(settings.serviceInterval - (lastOdometer - (settings.lastServiceOdometer || 0))) < 1000 ? 'bg-red-500' : 'bg-white'
+                }`}
+              style={{
+                width: `${Math.min(100, Math.max(0, ((lastOdometer - (settings.lastServiceOdometer || 0)) / settings.serviceInterval) * 100))}%`
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeTrip && (
+        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-4 flex items-center justify-between border border-white/10 shadow-lg">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white text-black rounded-2xl flex items-center justify-center shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-white/60">Práve prebieha</div>
+              <div className="text-sm font-bold text-white uppercase tracking-tight">{activeTrip.startTime} • {activeTrip.startOdometer} km</div>
+            </div>
+          </div>
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onAddTrip();
             }}
-            className="relative z-20 px-6 py-3 bg-white text-black rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-zinc-200 transition-all shadow-lg active:scale-95"
+            className="px-6 py-2.5 bg-white text-black rounded-full font-bold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all"
           >
-            Koniec
+            Ukončiť
           </button>
         </div>
       )}
 
-      {/* Stats Grid was removed from here */}
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-end px-1">
-          <div>
-            <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-1">Posledné záznamy</h3>
-            <div className="h-0.5 w-6 bg-white/20 rounded-full"></div>
-          </div>
-          {/* Tlačidlo ARCHÍV bolo odstránené na žiadosť používateľa */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-center px-1">
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Nedávne Aktivity</h3>
+          <button onClick={onViewAll} className="text-xs font-medium text-zinc-500 hover:text-white transition-colors">Všetky</button>
         </div>
 
-        <div className="space-y-2">
+        <div className="bg-zinc-900/40 rounded-3xl overflow-hidden border border-white/5">
           {recentTrips.length > 0 ? (
-            recentTrips.map(trip => (
-              <div key={trip.id} className="bg-zinc-900/30 p-4 rounded-2xl border border-white/[0.04] flex justify-between items-center hover:bg-white/[0.04] hover:border-white/[0.08] transition-all group">
+            recentTrips.map((trip, idx) => (
+              <div key={trip.id} className={`p-4 flex justify-between items-center active:bg-white/5 transition-colors ${idx !== recentTrips.length - 1 ? 'border-b border-white/5' : ''}`}>
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 bg-black text-zinc-500 rounded-xl flex items-center justify-center border border-white/5 group-hover:text-white group-hover:border-white/20 transition-all">
+                  <div className="w-10 h-10 bg-zinc-800 rounded-xl flex items-center justify-center text-zinc-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
                   <div>
-                    <div className="font-black text-white text-lg tracking-tighter">{trip.distanceKm} <span className="text-[9px] text-zinc-600 font-bold uppercase ml-0.5 tracking-normal">km</span></div>
-                    <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{new Date(trip.date).toLocaleDateString('sk-SK', { day: '2-digit', month: 'short' })} • {trip.startTime}</div>
+                    <div className="font-bold text-white text-base tracking-tight">{trip.distanceKm.toFixed(1)} km</div>
+                    <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
+                      {new Date(trip.date).toLocaleDateString('sk-SK', { day: '2-digit', month: 'short' })} • {trip.startTime}
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-black text-sm text-white">{trip.totalCost.toFixed(2)} €</div>
-                  <div className="text-[8px] font-bold text-zinc-600 uppercase tracking-tighter">{trip.fuelConsumed.toFixed(1)} Litrov</div>
+                <div className="text-right flex items-center gap-3">
+                  <div>
+                    <div className="font-bold text-white text-sm tabular-nums">{trip.totalCost.toFixed(2)} €</div>
+                    <div className="text-[10px] font-medium text-zinc-600 uppercase">{trip.fuelConsumed.toFixed(1)} L</div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-white/5">
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <p className="text-zinc-600 font-bold uppercase tracking-widest text-[8px] mb-2">Zatiaľ žiadne dáta</p>
-              <p className="text-zinc-800 text-[7px] uppercase tracking-[0.4em]">Kliknite na + v navigácii</p>
+            <div className="p-12 text-center">
+              <p className="text-zinc-600 text-xs font-medium uppercase tracking-widest">Žiadne záznamy</p>
             </div>
           )}
         </div>

@@ -10,17 +10,17 @@ interface TripFormProps {
   lastTripEndOdometer: number;
 }
 
-const TripForm: React.FC<TripFormProps> = ({ 
-  settings, 
-  activeTrip, 
-  onStart, 
-  onSave, 
+const TripForm: React.FC<TripFormProps> = ({
+  settings,
+  activeTrip,
+  onStart,
+  onSave,
   onCancel,
-  lastTripEndOdometer 
+  lastTripEndOdometer
 }) => {
   const [odometer, setOdometer] = useState<string>(
-    activeTrip 
-      ? activeTrip.startOdometer.toString() 
+    activeTrip
+      ? activeTrip.startOdometer.toString()
       : (lastTripEndOdometer > 0 ? lastTripEndOdometer.toString() : '')
   );
   const [note, setNote] = useState<string>(activeTrip?.note || '');
@@ -82,71 +82,67 @@ const TripForm: React.FC<TripFormProps> = ({
   };
 
   return (
-    <div className="max-w-md mx-auto animate-in zoom-in-95 duration-300">
-      <div className="bg-zinc-900 border border-white/10 p-5 sm:p-8 rounded-[2rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h2 className="text-2xl font-black text-white tracking-tighter uppercase">
-              {activeTrip ? 'Cieľ' : 'Štart'}
-            </h2>
-            <div className="h-1 w-6 bg-white/30 rounded-full mt-1"></div>
-          </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-black text-white tracking-widest uppercase">{activeTrip ? 'Ukončenie' : 'Zahájenie'}</span>
-            <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">{activeTrip ? 'Krok 02' : 'Krok 01'}</span>
-          </div>
+    <div className="max-w-lg mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
+      <div className="bg-zinc-900/40 rounded-3xl overflow-hidden border border-white/5">
+        <div className="p-4 border-b border-white/5 flex justify-between items-center">
+          <label className="text-sm font-semibold text-white">Aktuálny Čas</label>
+          <div className="text-sm font-medium text-zinc-400 tabular-nums">{currentTime || '00:00'}</div>
         </div>
-        
-        <div className="mb-6 py-4 bg-black rounded-2xl flex flex-col items-center justify-center border border-white/5 shadow-inner">
-          <div className="text-5xl font-black text-white tabular-nums tracking-tighter drop-shadow-lg">{currentTime || '00:00'}</div>
-          <div className="text-[8px] font-black text-zinc-600 uppercase tracking-[0.4em] mt-1">{currentDate}</div>
+        <div className="p-4 flex justify-between items-center">
+          <label className="text-sm font-semibold text-white">Dátum</label>
+          <div className="text-sm font-medium text-zinc-400">{currentDate}</div>
         </div>
-
-        <form onSubmit={activeTrip ? handleEnd : handleStart} className="space-y-5">
-          <div className="group">
-            <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-1.5 ml-1 group-focus-within:text-white transition-colors">Tachometer (km)</label>
-            <input 
-              type="number" 
-              inputMode="decimal"
-              required
-              value={odometer}
-              onChange={(e) => setOdometer(e.target.value)}
-              className="w-full px-0 py-2 bg-transparent border-b border-white/10 focus:border-white outline-none transition-all text-3xl font-black text-white placeholder-zinc-800 tabular-nums"
-              placeholder="0000.0"
-              autoFocus
-              onFocus={(e) => e.target.select()}
-            />
-          </div>
-
-          <div>
-            <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-1.5 ml-1">Poznámka / Cieľ</label>
-            <input 
-              type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full px-4 py-3 bg-black border border-white/5 focus:border-white/20 rounded-xl outline-none transition-all text-xs text-zinc-300 font-medium placeholder-zinc-700"
-              placeholder="Napríklad: Smer Bratislava..."
-            />
-          </div>
-
-          <div className="pt-2 flex flex-col gap-3">
-            <button 
-              type="submit"
-              className="w-full py-4 bg-white text-black rounded-xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-zinc-200 transition-all active:scale-[0.98] shadow-lg"
-            >
-              {activeTrip ? 'Uložiť a Uzatvoriť' : 'Zaznamenať Odchod'}
-            </button>
-            
-            <button 
-              type="button"
-              onClick={onCancel}
-              className="w-full py-1 text-zinc-600 text-[9px] font-bold uppercase tracking-widest hover:text-white transition-colors"
-            >
-              Zrušiť
-            </button>
-          </div>
-        </form>
       </div>
+
+      <form onSubmit={activeTrip ? handleEnd : handleStart} className="space-y-8">
+        <div className="space-y-2">
+          <h3 className="px-4 text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">Údaje o jazde</h3>
+          <div className="bg-zinc-900/40 rounded-3xl overflow-hidden border border-white/5">
+            <div className="p-4 border-b border-white/5 flex items-center gap-4">
+              <label className="w-24 text-sm font-semibold text-white">Stav tach.</label>
+              <input
+                type="number"
+                inputMode="decimal"
+                required
+                value={odometer}
+                onChange={(e) => setOdometer(e.target.value)}
+                className="flex-grow bg-transparent text-sm font-medium text-white placeholder-zinc-700 outline-none text-right tabular-nums"
+                placeholder="000.0"
+                autoFocus
+                onFocus={(e) => e.target.select()}
+              />
+              <span className="text-xs font-semibold text-zinc-600">km</span>
+            </div>
+            <div className="p-4 flex items-center gap-4">
+              <label className="w-24 text-sm font-semibold text-white">Poznámka</label>
+              <input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className="flex-grow bg-transparent text-sm font-medium text-white placeholder-zinc-700 outline-none text-right"
+                placeholder="Napr. Smer Bratislava..."
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 px-2">
+          <button
+            type="submit"
+            className="w-full py-4 bg-white text-black rounded-2xl font-bold text-base transition-all active:scale-[0.98] shadow-lg"
+          >
+            {activeTrip ? 'Ukončiť Jazdu' : 'Zahájiť Jazdu'}
+          </button>
+
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full py-2 text-zinc-500 text-sm font-medium hover:text-white transition-colors"
+          >
+            Zrušiť
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
