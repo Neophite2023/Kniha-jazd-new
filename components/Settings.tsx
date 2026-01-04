@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppSettings, ServiceReminder } from '../types';
 
 interface SettingsProps {
   settings: AppSettings;
   onSave: (settings: AppSettings) => void;
-  onBack: () => void;
+  requestNotificationPermission: () => Promise<void>;
+  onBack?: () => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ settings, onSave, onBack }) => {
+const Settings: React.FC<SettingsProps> = ({ settings, onSave, requestNotificationPermission, onBack }) => {
   const [fuelPriceStr, setFuelPriceStr] = useState(settings.fuelPrice.toString());
   const [consumptionStr, setConsumptionStr] = useState(settings.averageConsumption.toString());
   const [reminders, setReminders] = useState<ServiceReminder[]>(settings.serviceReminders || []);
   const [isSaved, setIsSaved] = useState(false);
+  const [notificationPermissionGranted, setNotificationPermissionGranted] = useState(false);
+
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      setNotificationPermissionGranted(true);
+    }
+  }, []);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,7 +191,36 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSave, onBack }) => {
           </div>
         </div>
 
-        <div className="space-y-4 px-2">
+        <div className="space-y-2">
+          <h3 className="px-4 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">Systémové Hlásenia</h3>
+          <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200 shadow-sm">
+            <div className={`p-4 flex items-center justify-between gap-4 transition-colors ${notificationPermissionGranted ? 'bg-zinc-50' : ''}`}>
+              <div>
+                <label className="text-sm font-semibold text-zinc-900 block">Vyskakovacie notifikácie</label>
+                <p className="text-[10px] text-zinc-400 font-medium">Upozornenie pri dosiahnutí limitu</p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  await requestNotificationPermission();
+                  setNotificationPermissionGranted(Notification.permission === 'granted');
+                }}
+                disabled={notificationPermissionGranted}
+                className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tight transition-all ${notificationPermissionGranted
+                    ? 'bg-zinc-200 text-zinc-500 cursor-default'
+                    : 'bg-zinc-950 text-white active:scale-95 shadow-lg shadow-zinc-200'
+                  }`}
+              >
+                {notificationPermissionGranted ? 'Povolené' : 'Povoliť'}
+              </button>
+            </div>
+          </div>
+          <p className="px-4 text-[10px] text-zinc-400 leading-relaxed">
+            Notifikácie sa zobrazia pri zostávajúcich 1000 km alebo 14 dňoch. Pre fungovanie na iPhone musí byť apka „Pridaná na plochu“.
+          </p>
+        </div>
+
+        <div className="space-y-4 pt-4 px-2">
           <button
             type="submit"
             disabled={isSaved}

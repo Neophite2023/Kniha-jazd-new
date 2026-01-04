@@ -74,6 +74,69 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'dashboard' | 'add' | 'history' | 'settings' | 'info'>('dashboard');
 
+  const [notifiedReminders, setNotifiedReminders] = useState<string[]>(() => {
+    const stored = localStorage.getItem('kniha_jazd_notifications_v1');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('kniha_jazd_notifications_v1', JSON.stringify(notifiedReminders));
+  }, [notifiedReminders]);
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+  };
+
+  useEffect(() => {
+    if (Notification.permission !== 'granted') return;
+
+    const lastOdometer = trips.length > 0 ? trips[0].endOdometer : 0;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const newNotifications: string[] = [];
+
+    settings.serviceReminders.forEach(reminder => {
+      let isDue = false;
+      let message = '';
+
+      if (reminder.type === 'distance' && reminder.interval) {
+        const remaining = reminder.interval - (lastOdometer - (reminder.lastServiceOdometer || 0));
+        if (remaining <= 1000) {
+          isDue = true;
+          message = `Zostáva už len ${Math.max(0, remaining).toLocaleString()} km do cieľa!`;
+        }
+      } else if (reminder.type === 'date' && reminder.targetDate) {
+        const target = new Date(reminder.targetDate);
+        const diffTime = target.getTime() - now.getTime();
+        const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (daysRemaining <= 14) {
+          isDue = true;
+          message = daysRemaining <= 0
+            ? `Termín ${reminder.name} už vypršal!`
+            : `Zostáva už len ${daysRemaining} dní do termínu!`;
+        }
+      }
+
+      // Ak je servis splatný a ešte sme o ňom neoboznámili v tomto cykle
+      const notificationKey = `${reminder.id}-${reminder.lastServiceOdometer || reminder.targetDate}`;
+      if (isDue && !notifiedReminders.includes(notificationKey)) {
+        new Notification(`Servisná pripomienka: ${reminder.name}`, {
+          body: message,
+          icon: 'https://cdn-icons-png.flaticon.com/512/2555/2555013.png'
+        });
+        newNotifications.push(notificationKey);
+      }
+    });
+
+    if (newNotifications.length > 0) {
+      setNotifiedReminders(prev => [...prev, ...newNotifications]);
+    }
+  }, [settings.serviceReminders, trips, notifiedReminders]);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(trips));
   }, [trips]);
@@ -182,6 +245,7 @@ const App: React.FC = () => {
             <Settings
               settings={settings}
               onSave={setSettings}
+              requestNotificationPermission={requestNotificationPermission}
               onBack={() => setView('dashboard')}
             />
           )}
