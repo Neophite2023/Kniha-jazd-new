@@ -30,34 +30,34 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {settings.serviceInterval && (
-        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm space-y-4">
+      {settings.serviceReminders && settings.serviceReminders.map(reminder => (
+        <div key={reminder.id} className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm space-y-4">
           <div className="flex justify-between items-end">
             <div>
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
-                {settings.serviceName || 'Servisný interval'}
+                {reminder.name}
               </span>
               <div className="text-2xl font-bold text-zinc-950">
-                {Math.max(0, settings.serviceInterval - (lastOdometer - (settings.lastServiceOdometer || 0))).toLocaleString()}
+                {Math.max(0, reminder.interval - (lastOdometer - reminder.lastServiceOdometer)).toLocaleString()}
                 <span className="text-sm font-medium text-zinc-400 ml-2">km do cieľa</span>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-xs font-bold text-zinc-300">pri {((settings.lastServiceOdometer || 0) + settings.serviceInterval).toLocaleString()} km</span>
+              <span className="text-xs font-bold text-zinc-300">pri {(reminder.lastServiceOdometer + reminder.interval).toLocaleString()} km</span>
             </div>
           </div>
 
           <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-1000 ${(settings.serviceInterval - (lastOdometer - (settings.lastServiceOdometer || 0))) < 1000 ? 'bg-red-500' : 'bg-zinc-950'
+              className={`h-full transition-all duration-1000 ${(reminder.interval - (lastOdometer - reminder.lastServiceOdometer)) < 1000 ? 'bg-red-500' : 'bg-zinc-950'
                 }`}
               style={{
-                width: `${Math.min(100, Math.max(0, ((lastOdometer - (settings.lastServiceOdometer || 0)) / settings.serviceInterval) * 100))}%`
+                width: `${Math.min(100, Math.max(0, ((lastOdometer - reminder.lastServiceOdometer) / reminder.interval) * 100))}%`
               }}
             />
           </div>
         </div>
-      )}
+      ))}
 
       {activeTrip && (
         <div className="bg-zinc-950 rounded-3xl p-4 flex items-center justify-between shadow-xl ring-1 ring-white/10">

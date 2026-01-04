@@ -33,19 +33,33 @@ const App: React.FC = () => {
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     const stored = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    if (!stored) return { fuelPrice: 1.65, averageConsumption: 6.5, serviceInterval: 15000, lastServiceOdometer: 0, serviceName: 'Výmena oleja' };
+    const defaults = {
+      fuelPrice: 1.65,
+      averageConsumption: 6.5,
+      serviceReminders: []
+    };
+
+    if (!stored) return defaults;
     try {
       const parsed = JSON.parse(stored);
+
+      // Migrácia z jedného záznamu na zoznam
+      if ((parsed.serviceInterval || parsed.serviceName) && !parsed.serviceReminders) {
+        parsed.serviceReminders = [{
+          id: 'migrated-' + Date.now(),
+          name: parsed.serviceName || 'Servisný interval',
+          interval: parsed.serviceInterval || 15000,
+          lastServiceOdometer: parsed.lastServiceOdometer || 0
+        }];
+      }
+
       return {
-        fuelPrice: 1.65,
-        averageConsumption: 6.5,
-        serviceInterval: 15000,
-        lastServiceOdometer: 0,
-        serviceName: 'Výmena oleja',
-        ...parsed
+        ...defaults,
+        ...parsed,
+        serviceReminders: parsed.serviceReminders || []
       };
     } catch (e) {
-      return { fuelPrice: 1.65, averageConsumption: 6.5, serviceInterval: 15000, lastServiceOdometer: 0, serviceName: 'Výmena oleja' };
+      return defaults;
     }
   });
 

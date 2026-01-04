@@ -21,12 +21,17 @@ export interface ActiveTrip {
   note?: string;
 }
 
+export interface ServiceReminder {
+  id: string;
+  name: string;
+  interval: number;
+  lastServiceOdometer: number;
+}
+
 export interface AppSettings {
   fuelPrice: number; // EUR/L
   averageConsumption: number; // L/100km
-  serviceInterval?: number; // km (e.g. 15000)
-  lastServiceOdometer?: number; // km at which last service was done
-  serviceName?: string; // custom name (e.g. "Výmena oleja")
+  serviceReminders: ServiceReminder[];
 }
 
 export interface HistoryStats {
