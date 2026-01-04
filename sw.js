@@ -3,8 +3,6 @@ const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/index.tsx',
-  '/App.tsx',
   'https://cdn-icons-png.flaticon.com/512/2555/2555013.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap'
 ];
