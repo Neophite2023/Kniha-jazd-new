@@ -126,26 +126,8 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col text-zinc-950 selection:bg-zinc-900/10 antialiased overflow-x-hidden relative">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-200 px-6 py-4 flex justify-between items-center">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-200 px-6 py-4 flex justify-center items-center">
         <h1 className="text-lg font-semibold tracking-tight">Kniha Jázd</h1>
-        <div className="flex items-center gap-1 -mr-2">
-          <button
-            onClick={() => setView('info')}
-            className={`p-2 transition-opacity ${view === 'info' ? 'text-zinc-950' : 'text-zinc-400 hover:text-zinc-950'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setView('settings')}
-            className={`p-2 transition-opacity ${view === 'settings' ? 'text-zinc-950' : 'text-zinc-400 hover:text-zinc-950'}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </button>
-        </div>
       </header>
 
       <main className="flex-grow w-full max-w-lg mx-auto p-4 pb-32">
@@ -281,7 +263,7 @@ const App: React.FC = () => {
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-3xl border-t border-zinc-200 pb-[env(safe-area-inset-bottom)]">
-        <div className="max-w-lg mx-auto flex justify-between items-center h-16 px-12">
+        <div className="max-w-lg mx-auto flex justify-between items-center h-16 px-6">
           <button
             onClick={() => setView('dashboard')}
             className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'dashboard' ? 'text-zinc-950' : 'text-zinc-400'}`}
@@ -289,18 +271,7 @@ const App: React.FC = () => {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'dashboard' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
-            <span className="text-[10px] font-medium">Prehľad</span>
-          </button>
-
-          <button
-            onClick={() => view === 'add' ? setView('dashboard') : setView('add')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'add' ? 'text-zinc-950' : 'text-zinc-400'}`}
-          >
-            <div className={`p-1.5 rounded-full shadow-lg transition-transform active:scale-95 ${view === 'add' ? 'bg-zinc-950 text-white' : 'bg-white text-zinc-900 border border-zinc-200'}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
+            <span className="text-[10px] font-bold uppercase tracking-tight">Prehľad</span>
           </button>
 
           <button
@@ -310,7 +281,38 @@ const App: React.FC = () => {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'history' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-[10px] font-medium">História</span>
+            <span className="text-[10px] font-bold uppercase tracking-tight">História</span>
+          </button>
+
+          <button
+            onClick={() => view === 'add' ? setView('dashboard') : setView('add')}
+            className={`flex flex-col items-center justify-center -mt-8 transition-transform active:scale-95`}
+          >
+            <div className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center ${activeTrip ? 'bg-red-500 text-white animate-pulse' : 'bg-zinc-950 text-white shadow-zinc-200'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={activeTrip ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
+              </svg>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setView('info')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'info' ? 'text-zinc-950' : 'text-zinc-400'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'info' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-[10px] font-bold uppercase tracking-tight">Info</span>
+          </button>
+
+          <button
+            onClick={() => setView('settings')}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'settings' ? 'text-zinc-950' : 'text-zinc-400'}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'settings' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span className="text-[10px] font-bold uppercase tracking-tight">Nastavenia</span>
           </button>
         </div>
       </nav>
