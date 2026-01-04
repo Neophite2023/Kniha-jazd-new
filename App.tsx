@@ -111,12 +111,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col text-white selection:bg-white/20 antialiased overflow-x-hidden relative">
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center">
+    <div className="min-h-screen bg-zinc-50 flex flex-col text-zinc-950 selection:bg-zinc-900/10 antialiased overflow-x-hidden relative">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-200 px-6 py-4 flex justify-between items-center">
         <h1 className="text-lg font-semibold tracking-tight">Kniha Jázd</h1>
         <button
           onClick={() => setView('settings')}
-          className="p-2 -mr-2 text-white hover:opacity-60 transition-opacity"
+          className="p-2 -mr-2 text-zinc-900 hover:opacity-60 transition-opacity"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -171,11 +171,11 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-3xl border-t border-white/5 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-3xl border-t border-zinc-200 pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-lg mx-auto flex justify-between items-center h-16 px-12">
           <button
             onClick={() => setView('dashboard')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'dashboard' ? 'text-white' : 'text-zinc-500'}`}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'dashboard' ? 'text-zinc-950' : 'text-zinc-400'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'dashboard' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -185,9 +185,9 @@ const App: React.FC = () => {
 
           <button
             onClick={() => view === 'add' ? setView('dashboard') : setView('add')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'add' ? 'text-white' : 'text-zinc-500'}`}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'add' ? 'text-zinc-950' : 'text-zinc-400'}`}
           >
-            <div className={`p-1.5 rounded-full transition-colors ${view === 'add' ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'}`}>
+            <div className={`p-1.5 rounded-full shadow-lg transition-transform active:scale-95 ${view === 'add' ? 'bg-zinc-950 text-white' : 'bg-white text-zinc-900 border border-zinc-200'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
@@ -196,7 +196,7 @@ const App: React.FC = () => {
 
           <button
             onClick={() => setView('history')}
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'history' ? 'text-white' : 'text-zinc-500'}`}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'history' ? 'text-zinc-950' : 'text-zinc-400'}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-[22px] w-[22px]" fill={view === 'history' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
