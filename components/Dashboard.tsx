@@ -30,34 +30,43 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {settings.serviceReminders && settings.serviceReminders.map(reminder => (
-        <div key={reminder.id} className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm space-y-4">
-          <div className="flex justify-between items-end">
-            <div>
-              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
-                {reminder.name}
-              </span>
-              <div className="text-2xl font-bold text-zinc-950">
-                {Math.max(0, reminder.interval - (lastOdometer - reminder.lastServiceOdometer)).toLocaleString()}
-                <span className="text-sm font-medium text-zinc-400 ml-2">km do cieľa</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-xs font-bold text-zinc-300">pri {(reminder.lastServiceOdometer + reminder.interval).toLocaleString()} km</span>
-            </div>
-          </div>
+      {settings.serviceReminders && settings.serviceReminders.length > 0 && (
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm space-y-5">
+          <h3 className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest px-1">Servisné Pripomienky</h3>
+          <div className="space-y-6">
+            {settings.serviceReminders.map(reminder => {
+              const remaining = reminder.interval - (lastOdometer - reminder.lastServiceOdometer);
+              const progress = Math.min(100, Math.max(0, ((lastOdometer - reminder.lastServiceOdometer) / reminder.interval) * 100));
 
-          <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-1000 ${(reminder.interval - (lastOdometer - reminder.lastServiceOdometer)) < 1000 ? 'bg-red-500' : 'bg-zinc-950'
-                }`}
-              style={{
-                width: `${Math.min(100, Math.max(0, ((lastOdometer - reminder.lastServiceOdometer) / reminder.interval) * 100))}%`
-              }}
-            />
+              return (
+                <div key={reminder.id} className="space-y-2">
+                  <div className="flex justify-between items-end px-1">
+                    <div>
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-0.5">
+                        {reminder.name}
+                      </span>
+                      <div className="text-lg font-bold text-zinc-950 leading-none">
+                        {Math.max(0, remaining).toLocaleString()}
+                        <span className="text-[10px] font-medium text-zinc-400 ml-1.5 uppercase">km do cieľa</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold text-zinc-300">pri {(reminder.lastServiceOdometer + reminder.interval).toLocaleString()} km</span>
+                    </div>
+                  </div>
+
+                  <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-1000 ${remaining < 1000 ? 'bg-red-500' : 'bg-zinc-950'}`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      ))}
+      )}
 
       {activeTrip && (
         <div className="bg-zinc-950 rounded-3xl p-4 flex items-center justify-between shadow-xl ring-1 ring-white/10">
