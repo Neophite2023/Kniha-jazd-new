@@ -286,10 +286,10 @@ const App: React.FC = () => {
 
           <button
             onClick={() => view === 'add' ? setView('dashboard') : setView('add')}
-            className={`flex flex-col items-center justify-center -mt-8 transition-transform active:scale-95`}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${view === 'add' ? 'text-zinc-950' : 'text-zinc-400'}`}
           >
-            <div className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center ${activeTrip ? 'bg-red-500 text-white animate-pulse' : 'bg-zinc-950 text-white shadow-zinc-200'}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className={`p-1.5 rounded-full shadow-lg transition-transform active:scale-95 ${activeTrip ? 'bg-red-500 text-white animate-pulse' : view === 'add' ? 'bg-zinc-950 text-white' : 'bg-white text-zinc-900 border border-zinc-200'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={activeTrip ? "M6 18L18 6M6 6l12 12" : "M12 4v16m8-8H4"} />
               </svg>
             </div>
