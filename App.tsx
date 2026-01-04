@@ -149,11 +149,13 @@ const App: React.FC = () => {
       </header>
 
       <main className="flex-grow w-full max-w-lg mx-auto p-4 pb-32">
-        <div className="mb-4 px-2 pt-2">
-          <h2 className="text-4xl font-extrabold tracking-tight">
-            {view === 'dashboard' ? 'Prehľad' : view === 'add' ? 'Záznam' : view === 'history' ? 'História' : view === 'info' ? 'Informácie' : 'Nastavenia'}
-          </h2>
-        </div>
+        {view !== 'dashboard' && (
+          <div className="mb-4 px-2 pt-2">
+            <h2 className="text-4xl font-extrabold tracking-tight">
+              {view === 'add' ? 'Záznam' : view === 'history' ? 'História' : view === 'info' ? 'Informácie' : 'Nastavenia'}
+            </h2>
+          </div>
+        )}
 
         <div className="view-transition">
           {view === 'dashboard' && (
