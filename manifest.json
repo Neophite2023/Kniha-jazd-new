@@ -1,0 +1,17 @@
+{
+  "name": "Kniha Jázd Pro",
+  "short_name": "Kniha Jázd",
+  "description": "Profesionálna evidencia jázd",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2555/2555013.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
