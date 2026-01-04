@@ -109,11 +109,11 @@ const TripForm: React.FC<TripFormProps> = ({
                 <span className="text-xs font-semibold text-zinc-400">km</span>
               </div>
 
-              <div className="flex items-center justify-between gap-4 bg-zinc-50 p-2 rounded-2xl">
+              <div className="flex items-center justify-between gap-1 bg-zinc-50 p-1.5 rounded-2xl">
                 <button
                   type="button"
                   onClick={() => handleAdjustOdometer(-1)}
-                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform"
+                  className="w-11 h-11 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform shrink-0"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
@@ -126,7 +126,7 @@ const TripForm: React.FC<TripFormProps> = ({
                   required
                   value={odometer}
                   onChange={(e) => setOdometer(e.target.value)}
-                  className="flex-grow bg-transparent text-2xl font-bold text-zinc-950 text-center outline-none tabular-nums"
+                  className="flex-grow min-w-0 bg-transparent text-2xl font-bold text-zinc-950 text-center outline-none tabular-nums h-11"
                   placeholder="000.0"
                   onFocus={(e) => e.target.select()}
                 />
@@ -134,7 +134,7 @@ const TripForm: React.FC<TripFormProps> = ({
                 <button
                   type="button"
                   onClick={() => handleAdjustOdometer(1)}
-                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform"
+                  className="w-11 h-11 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform shrink-0"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
