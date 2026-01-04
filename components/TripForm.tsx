@@ -81,6 +81,11 @@ const TripForm: React.FC<TripFormProps> = ({
     });
   };
 
+  const handleAdjustOdometer = (amount: number) => {
+    const current = parseFloat(odometer) || 0;
+    setOdometer((current + amount).toString());
+  };
+
   return (
     <div className="max-w-lg mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
       <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200 shadow-sm">
@@ -98,20 +103,44 @@ const TripForm: React.FC<TripFormProps> = ({
         <div className="space-y-2">
           <h3 className="px-4 text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">Údaje o jazde</h3>
           <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200 shadow-sm">
-            <div className="p-4 border-b border-zinc-100 flex items-center gap-4">
-              <label className="w-24 text-sm font-semibold text-zinc-900">Stav tach.</label>
-              <input
-                type="number"
-                inputMode="decimal"
-                required
-                value={odometer}
-                onChange={(e) => setOdometer(e.target.value)}
-                className="flex-grow bg-transparent text-sm font-medium text-zinc-950 placeholder-zinc-300 outline-none text-right tabular-nums"
-                placeholder="000.0"
-                autoFocus
-                onFocus={(e) => e.target.select()}
-              />
-              <span className="text-xs font-semibold text-zinc-400">km</span>
+            <div className="p-4 border-b border-zinc-100 space-y-4">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-semibold text-zinc-900">Stav tachometra</label>
+                <span className="text-xs font-semibold text-zinc-400">km</span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 bg-zinc-50 p-2 rounded-2xl">
+                <button
+                  type="button"
+                  onClick={() => handleAdjustOdometer(-1)}
+                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
+                  </svg>
+                </button>
+
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  required
+                  value={odometer}
+                  onChange={(e) => setOdometer(e.target.value)}
+                  className="flex-grow bg-transparent text-2xl font-bold text-zinc-950 text-center outline-none tabular-nums"
+                  placeholder="000.0"
+                  onFocus={(e) => e.target.select()}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => handleAdjustOdometer(1)}
+                  className="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-zinc-100 text-zinc-950 active:scale-90 transition-transform"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
             </div>
             <div className="p-4 flex items-center gap-4">
               <label className="w-24 text-sm font-semibold text-zinc-900">Poznámka</label>
